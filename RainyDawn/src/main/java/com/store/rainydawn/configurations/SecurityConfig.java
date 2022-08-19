@@ -2,11 +2,13 @@ package com.store.rainydawn.configurations;
 
 import com.store.rainydawn.JWT.JwtTokenFilter;
 import com.store.rainydawn.dao.AccountDAO;
+import com.store.rainydawn.entity.Accounts;
 import com.store.rainydawn.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -40,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        auth.authenticationProvider(authenticationProvider());
 //        auth.userDetailsService(username -> {
 //            try {
-//                Accounts accounts = accountService.getAccountByUsername("AdminToiCao");
+//                Accounts accounts = accountService.loadUserByUsername(username);
 //                String password = bCryptPasswordEncoder.encode(accounts.getPassword());
 //                String [] roles = accounts.getAuthorities().stream()
 //                        .map(er -> er.getRoles().getId())
@@ -71,7 +73,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
                 }
         );
-        http.authorizeRequests().antMatchers("/auth/login").permitAll().anyRequest().authenticated();
+        http.authorizeRequests()
+                .antMatchers("/auth/**", "/home").permitAll()
+//                .antMatchers("/user/*").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/admin/*").hasAnyRole("DIRE")
+                .anyRequest().authenticated();
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface AccountService {
+public interface AccountService extends UserDetailsService{
 
     List<Accounts> getAllAccount();
     Accounts saveAccount(Accounts account);

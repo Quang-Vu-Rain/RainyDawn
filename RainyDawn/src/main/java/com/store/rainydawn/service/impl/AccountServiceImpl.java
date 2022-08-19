@@ -69,4 +69,25 @@ public class AccountServiceImpl implements AccountService {
         accountDAO.findById(id).orElseThrow(() -> new ResourceNotFoundException("Account", "Id", id));
         accountDAO.deleteById(id);
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        final Accounts account = accountDAO.findByUsername(username);
+        if(account == null){
+            throw new UsernameNotFoundException(username);
+        }
+        UserDetails userDetails = User.withUsername(account.getUsername())
+                .password(account.getPassword())
+                .authorities(getAuthorities(account)).build();
+        return userDetails;
+    }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(Accounts accounts) {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        Set<Roles> role = accounts.getRoles();
+        for (Roles r : role){
+            authorities.add(new SimpleGrantedAuthority(r.getName()));
+        }
+        return authorities;
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +59,7 @@ public class Accounts implements UserDetails {
         Set<GrantedAuthority> authorities = new HashSet<>();
         Set<Roles> role = getRoles();
         for (Roles r : role){
-            authorities.add(new SimpleGrantedAuthority(r.getName()));
+            authorities.add(new SimpleGrantedAuthority(r.getId()));
         }
         return authorities;
     }
